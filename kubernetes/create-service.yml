@@ -10,24 +10,24 @@
           apiVersion: v1
           kind: Service
           metadata:
-            name: helloworld
-            namespace: funstuff
+            name: $(tasks.create-vm-from-template.results.name)
+            namespace: $(tasks.create-vm-from-template.results.namespace)
           spec:
             selector:
-              app: helloworld
+              kubevirt.io/domain: $(tasks.create-vm-from-template.results.name)
             ports:
-            - port: 8080
-              targetPort: 8080
+            - port: $(params.svcPort)
+              targetPort: $(params.svcPort)
         wait: yes
-      register: helloworld_svc
+      register: svc
     - name: Get the Service
       k8s_info:
         kind: Service
-        namespace: funstuff
-      register: funstuff_service_list
+        namespace: $(tasks.create-vm-from-template.results.namespace)
+      register: service_list
     - name: Log Service Details
       debug:
         msg: "{{ item | json_query('metadata.name') }}"
-      loop: '{{funstuff_service_list.resources}}'
+      loop: '{{service_list.resources}}'
       loop_control:
         label: "Service (Namespace: {{item | json_query('metadata.namespace')}})"
