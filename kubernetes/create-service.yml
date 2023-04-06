@@ -23,7 +23,7 @@
     - name: Get the Service
       k8s_info:
         kind: Service
-        namespace: namespace: "{{ namespace }}"
+        namespace: "{{ namespace }}"
       register: service_list
     - name: Log Service Details
       debug:
