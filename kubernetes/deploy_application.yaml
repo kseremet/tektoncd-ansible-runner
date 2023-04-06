@@ -6,5 +6,10 @@
       wait_for_connection:
         delay: 1
         timeout: 300
-    - name: Ping all windows hosts
-      win_ping:
+    - name: Ensure IIS is installed
+      win_feature:
+        name: "Web-Server"
+        state: present
+        restart: no
+        include_sub_features: yes
+        include_management_tools: yes
