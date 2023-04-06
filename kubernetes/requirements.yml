@@ -6,5 +6,4 @@ collections:
     version: 4.8.0
   - name: ansible.windows
     version: 1.13.0
-  - name: community.general
-    version: 6.5.0
+
