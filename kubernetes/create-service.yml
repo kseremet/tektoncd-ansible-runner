@@ -16,14 +16,14 @@
             selector:
               kubevirt.io/domain: "{{ service_selector_label_value }}"
             ports:
-            - port: 5986
-              targetPort: 5986
+            - port: "{{ service_port | int }}"
+              targetPort: "{{ service_port | int }}"
         wait: yes
       register: svc
     - name: Get the Service
       k8s_info:
         kind: Service
-        namespace: $(tasks.create-vm-from-template.results.namespace)
+        namespace: namespace: "{{ namespace }}"
       register: service_list
     - name: Log Service Details
       debug:
