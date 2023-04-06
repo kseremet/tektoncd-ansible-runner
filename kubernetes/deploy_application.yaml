@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  gather_facts: no
   tasks:
     - name: Wait for Windows vm to be reachable over WinRM
       wait_for_connection:
