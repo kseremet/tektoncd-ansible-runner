@@ -14,7 +14,7 @@
             namespace: {{ namespace }}
           spec:
             selector:
-              kubevirt.io/domain: {{ service_selector_label_value }}
+              vm.kubevirt.io/name: {{ service_selector_label_value }}
             ports:
             - port: {{ service_port | int }}
               targetPort: {{ service_port | int }}
