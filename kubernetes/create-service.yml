@@ -16,8 +16,8 @@
             selector:
               kubevirt.io/domain: "{{ service_selector_label_value }}"
             ports:
-            - port: "{{ service_port }}"
-              targetPort: "{{ service_port }}"
+            - port: "{{ service_port | int }}"
+              targetPort: "{{ service_port | int }}"
         wait: yes
       register: svc
     - name: Get the Service
