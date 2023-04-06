@@ -1,5 +1,9 @@
 ---
 - hosts: all
   tasks:
+    - name: Wait for Windows vm to be reachable over WinRM
+      wait_for_connection:
+        delay: 1
+        timeout: 300
     - name: Ping all windows hosts
       win_ping:
