@@ -1,11 +1,21 @@
 ---
 - hosts: all
   gather_facts: no
+  vars:
+    iis_sites:
+      - name: 'Ansible Playbook Test'
+        port: '8080'
+        path: 'C:\sites\playbooktest'
+      - name: 'Ansible Playbook Test 2'
+        port: '8081'
+        path: 'C:\sites\playbooktest2'
+    iis_test_message: "Hello World!  My test IIS Server"
   tasks:
     - name: Wait for Windows vm to be reachable over WinRM
       wait_for_connection:
         delay: 1
         timeout: 300
+        
     - name: Ensure IIS is installed
       win_feature:
         name: "Web-Server"
@@ -13,3 +23,42 @@
         restart: no
         include_sub_features: yes
         include_management_tools: yes
+        
+    - name: Create site directory structure
+      win_file:
+        path: "{{ item.path }}"
+        state: directory
+      with_items: "{{ iis_sites }}"
+
+    - name: Create IIS site
+      win_iis_website:
+        name: "{{ item.name }}"
+        state: started
+        port: "{{ item.port }}"
+        physical_path: "{{ item.path }}"
+      with_items: "{{ iis_sites }}"
+      notify: restart iis service
+
+    - name: Open port for site on the firewall
+      win_firewall_rule:
+        name: "iisport{{ item.port }}"
+        enable: yes
+        state: present
+        localport: "{{ item.port }}"
+        action: Allow
+        direction: In
+        protocol: Tcp
+      with_items: "{{ iis_sites }}"
+
+    - name: Template simple web site to iis_site_path as index.html
+      win_template:
+        src: 'index.html.j2'
+        dest: '{{ item.path }}\index.html'
+      with_items: "{{ iis_sites }}"
+
+    - name: Show website addresses
+      debug:
+        msg: "{{ item }}"
+      loop:
+        - http://{{ ansible_host }}:8080
+        - http://{{ ansible_host }}:8081
