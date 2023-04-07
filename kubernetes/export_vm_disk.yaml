@@ -33,12 +33,12 @@
               kind: PersistentVolumeClaim
               name: {{ pvc_name }}
         wait: yes
+    - name: Get the VirtualMachineExport object
+      k8s_info:
+        kind: VirtualMachineExport
+        namespace: "{{ namespace }}"
+        name: vmexport-{{ vm_name }}
       register: vmexport
-#    - name: Get the Service
-#      k8s_info:
-#        kind: Service
-#        namespace: "{{ namespace }}"
-#      register: service_list
     - name: Log VirtualMachineExport Details
       debug:
         var: vmexport
