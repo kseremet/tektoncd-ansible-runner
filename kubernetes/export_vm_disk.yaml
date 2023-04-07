@@ -12,6 +12,7 @@
           kind: Secret
           metadata:
             name: vmexport-token-{{ vm_name }}
+            namespace: {{ namespace }}
           stringData:
             token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
         wait: yes
@@ -24,6 +25,7 @@
           kind: VirtualMachineExport
           metadata:
             name: vmexport-{{ vm_name }}
+            namespace: {{ namespace }}
           spec:
             tokenSecretRef: vmexport-token-{{ vm_name }}
             source:
