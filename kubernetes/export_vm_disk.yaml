@@ -3,9 +3,11 @@
   gather_facts: no
   collections:
     - community.kubernetes
-  vars:
-    token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
   tasks:
+    - name: Generate a new virtual disk download token
+      set_fact:
+        token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
+
     - name: Create a new VirtualMachineExport Token
       k8s:
         state: present
@@ -18,7 +20,7 @@
           stringData:
             token: "{{ token }}"
         wait: yes
-      register: secret
+      
     - name: Create a new VirtualMachineExport object
       k8s:
         state: present
@@ -35,6 +37,10 @@
               kind: PersistentVolumeClaim
               name: {{ pvc_name }}
         wait: yes
+        wait_condition:
+          reason: PodReady
+          status: "True"
+          type: Ready
         
     - name: Get the VirtualMachineExport object
       k8s_info:
@@ -63,7 +69,7 @@
     - name: Download virtual disk file
       ansible.builtin.command:
         cmd: curl -k -H "x-kubevirt-export-token:{{ token }}" "{{ download_url }}" --output "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
-      creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
       
     - name: Get stats of the downloaded virtual disk file
       ansible.builtin.stat:
