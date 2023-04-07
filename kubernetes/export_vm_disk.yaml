@@ -29,7 +29,7 @@
             source:
               apiGroup: ""
               kind: PersistentVolumeClaim
-              name: { pvc_name }}
+              name: {{ pvc_name }}
         wait: yes
       register: vmexport
 #    - name: Get the Service
