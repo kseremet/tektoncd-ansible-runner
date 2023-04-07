@@ -69,3 +69,12 @@
         name: W3Svc
         state: restarted
         start_mode: auto
+        
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Generalize OS and shutdown
+    win_shell: C:\Windows\system32\sysprep\sysprep.exe /generalize /shutdown /oobe /quiet
+    args:
+      executable: cmd
+
