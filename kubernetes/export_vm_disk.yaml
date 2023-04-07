@@ -42,4 +42,6 @@
       register: vmexport
     - name: Log VirtualMachineExport Details
       debug:
-        var: vmexport
+        msg="{{ vmexport | json_query(jmesquery) }}"
+      vars:
+         jmesquery: vmexport.resources[0].status.links.internal.volumes[0].formats[?format=='raw'].url
