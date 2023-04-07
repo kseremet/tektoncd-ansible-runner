@@ -66,3 +66,4 @@
         dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
         headers:
           x-kubevirt-export-token: "{{ token }}"
+        validate_certs: no
