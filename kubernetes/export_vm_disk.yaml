@@ -61,14 +61,15 @@
         mode: "0755"
         
     - name: Download virtual disk file
-      ansible.builtin.get_url:
-        url: "{{ download_url }}"
-        dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
-        headers:
-          x-kubevirt-export-token: "{{ token }}"
-        validate_certs: no
-      register: downl
+      ansible.builtin.command:
+        cmd: curl -k -H "x-kubevirt-export-token:{{ token }}" "{{ download_url }}" --output "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+      creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
       
-    - name: Print download url
+    - name: Get stats of the downloaded virtual disk file
+      ansible.builtin.stat:
+        path: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+      register: st
+
+    - name: Print virtual disk info
       debug:
-        var: downl
+        var: st
