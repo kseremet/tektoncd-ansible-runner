@@ -12,7 +12,7 @@
           metadata:
             name: vmexport-token-{{ vm_name }}
           stringData:
-            token: "{{ lookup('password', '/dev/null length=12 ascii_letters,digits') }}"
+            token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
         wait: yes
       register: secret
     - name: Create a new VirtualMachineExport object
