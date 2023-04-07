@@ -1,0 +1,41 @@
+- hosts: localhost
+  connection: local
+  collections:
+    - community.kubernetes
+  tasks:
+    - name: Create a new VirtualMachineExport Token
+      k8s:
+        state: present
+        resource_definition: |
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: vmexport-token-{{ vm_name }}
+          stringData:
+            token: "{{ lookup('password', '/dev/null length=12 ascii_letters,digits') }}"
+        wait: yes
+      register: secret
+    - name: Create a new VirtualMachineExport object
+      k8s:
+        state: present
+        resource_definition: |
+          apiVersion: export.kubevirt.io/v1alpha1
+          kind: VirtualMachineExport
+          metadata:
+            name: vmexport-{{ vm_name }}
+          spec:
+            tokenSecretRef: vmexport-token-{{ vm_name }}
+            source:
+              apiGroup: ""
+              kind: PersistentVolumeClaim
+              name: { pvc_name }}
+        wait: yes
+      register: vmexport
+#    - name: Get the Service
+#      k8s_info:
+#        kind: Service
+#        namespace: "{{ namespace }}"
+#      register: service_list
+    - name: Log VirtualMachineExport Details
+      debug:
+        var: vmexport
