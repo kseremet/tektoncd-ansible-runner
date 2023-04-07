@@ -3,6 +3,8 @@
   gather_facts: no
   collections:
     - community.kubernetes
+  vars:
+    token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
   tasks:
     - name: Create a new VirtualMachineExport Token
       k8s:
@@ -14,7 +16,7 @@
             name: vmexport-token-{{ vm_name }}
             namespace: {{ namespace }}
           stringData:
-            token: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
+            token: "{{ token }}"
         wait: yes
       register: secret
     - name: Create a new VirtualMachineExport object
@@ -48,6 +50,19 @@
       vars:
          jmesquery: resources[0].status.links.internal.volumes[0].formats[?format=='raw'].url
          
-    - name: Dump download url
+    - name: Print download url
       debug:
         var: download_url
+
+    - name: Ensure download directory exists
+      ansible.builtin.file:
+        path: "{{ lookup('ansible.builtin.env', 'HOME') }}/files"
+        state: directory
+        mode: "0755"
+        
+    - name: Download virtual disk file
+      ansible.builtin.get_url:
+        url: "{{ download_url }}"
+        dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+        headers:
+          x-kubevirt-export-token: "{{ token }}"
