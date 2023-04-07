@@ -33,6 +33,7 @@
               kind: PersistentVolumeClaim
               name: {{ pvc_name }}
         wait: yes
+        
     - name: Get the VirtualMachineExport object
       k8s_info:
         api_version: export.kubevirt.io/v1alpha1
@@ -40,8 +41,13 @@
         namespace: "{{ namespace }}"
         name: vmexport-{{ vm_name }}
       register: vmexport
-    - name: Log VirtualMachineExport Details
-      debug:
-        msg="{{ vmexport | json_query(jmesquery) }}"
+      
+    - name: Get virtual disk download url
+      set_fact:
+        download_url: "{{ (vmexport | json_query(jmesquery))[0] }}"
       vars:
-         jmesquery: vmexport.resources[0].status.links.internal.volumes[0].formats[?format=='raw'].url
+         jmesquery: resources[0].status.links.internal.volumes[0].formats[?format=='raw'].url
+         
+    - name: Dump download url
+      debug:
+        var: download_url
