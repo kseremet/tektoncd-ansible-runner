@@ -35,7 +35,7 @@
         wait: yes
     - name: Get the VirtualMachineExport object
       k8s_info:
-        apiVersion: export.kubevirt.io/v1alpha1
+        api_version: export.kubevirt.io/v1alpha1
         kind: VirtualMachineExport
         namespace: "{{ namespace }}"
         name: vmexport-{{ vm_name }}
