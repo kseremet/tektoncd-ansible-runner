@@ -77,4 +77,6 @@
     win_shell: C:\Windows\system32\sysprep\sysprep.exe /generalize /shutdown /oobe /quiet
     args:
       executable: cmd
+    async: 1200
+    poll: 0
 
