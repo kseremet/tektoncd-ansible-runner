@@ -67,3 +67,8 @@
         headers:
           x-kubevirt-export-token: "{{ token }}"
         validate_certs: no
+      register: downl
+      
+    - name: Print download url
+      debug:
+        var: downl
