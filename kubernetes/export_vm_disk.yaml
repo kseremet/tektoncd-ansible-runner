@@ -66,9 +66,25 @@
         state: directory
         mode: "0755"
         
+    - name: Download aria2 rpm package
+      ansible.builtin.get_url:
+        url: https://archive.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/a/aria2-1.35.0-2.el8.x86_64.rpm
+        dest: /tmp/aria2-1.35.0-2.el8.x86_64.rpm
+        mode: '0664'
+        
+    - name: Install aria2 rpm package
+      yum:
+        name: /tmp/aria2-1.35.0-2.el8.x86_64.rpm
+        state: present
+        
+#    - name: Download virtual disk file
+#      ansible.builtin.command:
+#        cmd: curl -k -H "x-kubevirt-export-token:{{ token }}" "{{ download_url }}" --output "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+#        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+      
     - name: Download virtual disk file
       ansible.builtin.command:
-        cmd: curl -k -H "x-kubevirt-export-token:{{ token }}" "{{ download_url }}" --output "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
+        cmd: aria2c --max-connection-per-server=5 --split=5 --quiet --check-certificate=false --header="x-kubevirt-export-token:{{ token }" -o "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img" "{{ download_url }}"
         creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
       
     - name: Get stats of the downloaded virtual disk file
