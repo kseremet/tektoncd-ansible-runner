@@ -76,6 +76,7 @@
       yum:
         name: /tmp/aria2-1.35.0-2.el8.x86_64.rpm
         state: present
+        disable_gpg_check: yes
         
 #    - name: Download virtual disk file
 #      ansible.builtin.command:
