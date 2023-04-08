@@ -87,7 +87,7 @@
       
     - name: Download virtual disk file
       ansible.builtin.command:
-        cmd: aria2c --max-connection-per-server=5 --split=5 --quiet --check-certificate=false --header="x-kubevirt-export-token:{{ token }}" -o "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img" "{{ download_url }}"
+        cmd: aria2c --max-connection-per-server=5 --split=5 --quiet --check-certificate=false --header="x-kubevirt-export-token:{{ token }}" --dir="{{ lookup('ansible.builtin.env', 'HOME') }}/files" --out="disk.img" "{{ download_url }}"
         creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
       
     - name: Convert the downloaded raw virtual disk to Qcow2
