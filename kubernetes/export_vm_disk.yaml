@@ -93,7 +93,7 @@
     - name: Convert the downloaded raw virtual disk to Qcow2
       ansible.builtin.command:
         cmd: qemu-img convert -q -f raw -O qcow2 "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img" "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
-      creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
+        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
       register: qemu
       
     - name: Remove raw disk image
