@@ -102,7 +102,7 @@
         path: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
         state: absent
         
-    - name: Compress the Qcow2 disk image
-      ansible.builtin.command:
-        cmd: pigz -k "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
-        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2.gz"
+#    - name: Compress the Qcow2 disk image
+#      ansible.builtin.command:
+#        cmd: pigz -k "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
+#        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2.gz"
