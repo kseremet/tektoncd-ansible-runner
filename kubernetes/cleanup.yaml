@@ -11,3 +11,12 @@
         namespace: {{ namespace }}
         name: {{ service_name }}
         wait: yes
+        
+    - name: Remove the VirtualMachineExport Token
+      kubernetes.core.k8s:
+        state: absent
+        apiVersion: v1
+        kind: Secret
+        namespace: "{{ namespace }}"
+        name: vmexport-token-{{ vm_name }}
+        wait: yes
