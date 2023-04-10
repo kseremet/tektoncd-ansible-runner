@@ -3,7 +3,7 @@
   collections:
     - community.kubernetes
   tasks:
-    - name: Ensure VM service remved
+    - name: Ensure VM service removed
       k8s:
         state: absent
         api_version: v1
@@ -15,7 +15,7 @@
     - name: Remove the VirtualMachineExport Token
       k8s:
         state: absent
-        apiVersion: v1
+        api_version: v1
         kind: Secret
         namespace: "{{ namespace }}"
         name: vmexport-token-{{ vm_name }}
