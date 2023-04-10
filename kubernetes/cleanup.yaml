@@ -8,8 +8,8 @@
         state: absent
         api_version: v1
         kind: Service
-        namespace: {{ namespace }}
-        name: {{ service_name }}
+        namespace: "{{ namespace }}"
+        name: "{{ service_name }}"
         wait: yes
         
     - name: Remove the VirtualMachineExport Token
