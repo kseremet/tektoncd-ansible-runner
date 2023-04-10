@@ -119,6 +119,7 @@
         namespace: "{{ namespace }}"
         name: vmexport-token-{{ vm_name }}
         wait: yes
+        
 #    - name: Compress the Qcow2 disk image
 #      ansible.builtin.command:
 #        cmd: pigz -k "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.qcow2"
