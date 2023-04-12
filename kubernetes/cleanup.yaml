@@ -42,3 +42,15 @@
         namespace: "{{ item.metadata.namespace }}"
         state: absent
       loop: "{{ filtered_pvcs }}"
+      
+    - name: Reset finalizers of deleted PVCs
+      k8s:
+        api_version: v1
+        kind: PersistentVolumeClaim
+        name: "{{ item.metadata.name }}"
+        namespace: "{{ item.metadata.namespace }}"
+        patch:
+          - op: replace
+            path: /metadata/finalizers
+            value: []
+      loop: "{{ filtered_pvcs }}"
