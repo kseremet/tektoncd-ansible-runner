@@ -34,10 +34,6 @@
       vars:
         jmespath_expr: "[?metadata.ownerReferences[0].uid == `{{ pipelinerun_uid }}`]"
 
-    - name: Print filtered PVC list
-      debug:
-        var: filtered_pvcs
-        
     - name: Delete the PVCs used by this PipeLineRun
       k8s:
         api_version: v1
