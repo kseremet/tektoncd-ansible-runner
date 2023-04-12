@@ -20,3 +20,29 @@
         namespace: "{{ namespace }}"
         name: vmexport-token-{{ vm_name }}
         wait: yes
+
+    - name: Get list of PVCs
+      k8s_info:
+        api_version: v1
+        kind: PersistentVolumeClaim
+        namespace: "{{ namespace }}"
+      register: pvc_list
+
+    - name: Filter out the PVC used by this PipeLineRun as its workspace
+      set_fact:
+        filtered_pvcs: "{{ pvc_list.resources | json_query(jmespath_expr) }}"
+      vars:
+        jmespath_expr: "[?metadata.ownerReferences[0].uid == `{{ pipelinerun_uid }}`]"
+
+    - name: Print filtered PVC list
+      debug:
+        var: filtered_pvcs
+        
+    - name: Delete the PVCs used by this PipeLineRun
+      k8s:
+        api_version: v1
+        kind: PersistentVolumeClaim
+        name: "{{ item.metadata.name }}"
+        namespace: "{{ item.metadata.namespace }}"
+        state: absent
+      loop: "{{ filtered_pvcs }}"
