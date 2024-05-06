@@ -65,27 +65,16 @@
         path: "{{ lookup('ansible.builtin.env', 'HOME') }}/files"
         state: directory
         mode: "0755"
-        
-    - name: Download aria2 rpm package
-      ansible.builtin.get_url:
-        url: https://archive.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/a/aria2-1.35.0-2.el8.x86_64.rpm
-        dest: /tmp/aria2-1.35.0-2.el8.x86_64.rpm
-        mode: '0664'
-        
+                
     - name: Ensure required rpm packages installed
       yum:
         name:
-          - /tmp/aria2-1.35.0-2.el8.x86_64.rpm
+          - aria2
           - qemu-img
           - pigz
         state: present
         disable_gpg_check: yes
-        
-#    - name: Download virtual disk file
-#      ansible.builtin.command:
-#        cmd: curl -k -H "x-kubevirt-export-token:{{ token }}" "{{ download_url }}" --output "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
-#        creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/files/disk.img"
-      
+              
     - name: Download virtual disk file
       ansible.builtin.command:
         cmd: aria2c --max-connection-per-server=5 --split=5 --quiet --check-certificate=false --header="x-kubevirt-export-token:{{ token }}" --dir="{{ lookup('ansible.builtin.env', 'HOME') }}/files" --out="disk.img" "{{ download_url }}"
