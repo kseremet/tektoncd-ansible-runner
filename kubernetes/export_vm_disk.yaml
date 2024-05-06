@@ -2,7 +2,7 @@
   connection: local
   gather_facts: no
   collections:
-    - community.kubernetes
+    - kubernetes.core
   tasks:
     - name: Generate a new virtual disk download token
       set_fact:
