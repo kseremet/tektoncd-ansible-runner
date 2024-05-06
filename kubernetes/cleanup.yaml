@@ -44,8 +44,7 @@
       loop: "{{ filtered_pvcs }}"
       
     - name: Reset finalizers of deleted PVCs
-      k8s:
-        api_version: v1
+      kubernetes.core.k8s_json_patch:
         kind: PersistentVolumeClaim
         name: "{{ item.metadata.name }}"
         namespace: "{{ item.metadata.namespace }}"
