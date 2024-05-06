@@ -1,7 +1,7 @@
 - hosts: localhost
   connection: local
   collections:
-    - community.kubernetes
+    - kubernetes.core
   tasks:
     - name: Create a new Service
       k8s:
