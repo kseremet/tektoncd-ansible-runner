@@ -1,0 +1,26 @@
+---
+- name: Upgrade packages on supported hosts
+  hosts: all
+  become: yes
+  tasks:
+    - name: Gather facts about the host
+      ansible.builtin.setup:
+
+    - name: Check if the host is running a supported distribution and version
+      ansible.builtin.assert:
+        that:
+          - (ansible_distribution == "RedHat" and ansible_distribution_major_version in ["8", "9"]) or
+            (ansible_distribution == "CentOS" and ansible_distribution_version in ["8", "9"])
+        msg: "Host is not running a supported distribution and version"
+
+    - name: Upgrade all packages to the latest version on RHEL 8 or 9
+      ansible.builtin.yum:
+        name: "*"
+        state: latest
+      when: ansible_distribution == "RedHat"
+
+    - name: Upgrade all packages to the latest version on CentOS Stream 8 or 9
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+      when: ansible_distribution == "CentOS"
