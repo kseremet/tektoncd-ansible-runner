@@ -20,14 +20,16 @@
               targetPort: {{ service_port | int }}
         wait: yes
       register: svc
+
     - name: Get the Service
       k8s_info:
         kind: Service
         namespace: "{{ namespace }}"
       register: service_list
+
     - name: Log Service Details
       debug:
-        msg: "{{ item | json_query('metadata.name') }}"
-      loop: '{{service_list.resources}}'
+        msg: "Service name: {{ item.metadata.name }}"
+      loop: "{{ service_list.resources }}"
       loop_control:
-        label: "Service (Namespace: {{item | json_query('metadata.namespace')}})"
+        label: "Service (Namespace: {{ item.metadata.namespace }})"
