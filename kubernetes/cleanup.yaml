@@ -11,7 +11,7 @@
         namespace: "{{ namespace }}"
         name: "{{ service_name }}"
         wait: yes
-        
+
     - name: Remove the VirtualMachineExport Token
       k8s:
         state: absent
@@ -28,12 +28,6 @@
         namespace: "{{ namespace }}"
       register: pvc_list
 
-    - name: Filter out the PVC used by this PipeLineRun as its workspace
-      set_fact:
-        filtered_pvcs: "{{ pvc_list.resources | json_query(jmespath_expr) }}"
-      vars:
-        jmespath_expr: "[?metadata.ownerReferences[0].uid == `{{ pipelinerun_uid }}`]"
-
     - name: Delete the PVCs used by this PipeLineRun
       k8s:
         api_version: v1
@@ -41,8 +35,9 @@
         name: "{{ item.metadata.name }}"
         namespace: "{{ item.metadata.namespace }}"
         state: absent
-      loop: "{{ filtered_pvcs }}"
-      
+      loop: "{{ pvc_list.resources }}"
+      when: "item.metadata.ownerReferences is defined and item.metadata.ownerReferences[0].uid == pipelinerun_uid"
+
     - name: Reset finalizers of deleted PVCs
       kubernetes.core.k8s_json_patch:
         kind: PersistentVolumeClaim
@@ -52,4 +47,5 @@
           - op: replace
             path: /metadata/finalizers
             value: []
-      loop: "{{ filtered_pvcs }}"
+      loop: "{{ pvc_list.resources }}"
+      when: "item.metadata.ownerReferences is defined and item.metadata.ownerReferences[0].uid == pipelinerun_uid"
