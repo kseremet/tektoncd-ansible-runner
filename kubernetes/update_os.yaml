@@ -24,3 +24,6 @@
         name: "*"
         state: latest
       when: ansible_distribution == "CentOS"
+
+    - name: Shut down the machine
+      community.general.shutdown:
